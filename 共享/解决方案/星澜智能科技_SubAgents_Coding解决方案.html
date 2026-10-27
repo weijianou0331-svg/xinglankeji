@@ -1,0 +1,1015 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>星澜智能科技 · SubAgents 工程化交付体系 — Coding 解决方案</title>
+<style>
+:root{
+  --ink:#15233b; --muted:#5b6b83; --bg:#f4f7fb; --card:#ffffff;
+  --line:#dbe3ef; --blue:#1f4fa8; --blue2:#2f6fe4; --cyan:#0a8fa5; --cyanbg:#e5f6f8;
+  --green:#1e8e5a; --greenbg:#e9f7ef; --amber:#b47608; --amberbg:#fcf3e1;
+  --red:#c23b3b; --redbg:#fdeaea; --violet:#6b46c1; --violetbg:#f1edfb;
+  --radius:12px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:"PingFang SC","Hiragino Sans GB","Microsoft YaHei",system-ui,sans-serif;color:var(--ink);background:var(--bg);line-height:1.75;font-size:15px}
+a{color:var(--blue2);text-decoration:none}
+/* ===== 侧栏 ===== */
+.sidebar{position:fixed;top:0;left:0;bottom:0;width:256px;background:#0e2140;color:#cfe0f5;padding:20px 0;overflow-y:auto;z-index:50}
+.sidebar .brand{padding:4px 22px 14px;border-bottom:1px solid rgba(255,255,255,.12);margin-bottom:12px}
+.sidebar .brand b{display:block;font-size:17px;color:#fff;letter-spacing:.5px}
+.sidebar .brand small{color:#8fa9cf;font-size:12px}
+.sidebar nav a{display:block;padding:7px 22px;color:#b9cbe6;font-size:13.5px;border-left:3px solid transparent}
+.sidebar nav a:hover{color:#fff;background:rgba(255,255,255,.06)}
+.sidebar nav a.on{color:#fff;border-left-color:#39b8d0;background:rgba(57,184,208,.12)}
+.sidebar nav .grp{display:block;padding:12px 22px 4px;font-size:11px;color:#6f8cb8;letter-spacing:1px}
+/* ===== 主区 ===== */
+.main{margin-left:256px;padding:28px 44px 60px}
+.wrap{max-width:1080px;margin:0 auto}
+/* ===== Hero ===== */
+.hero{background:linear-gradient(135deg,#0e2140 0%,#16457e 55%,#0a8fa5 130%);border-radius:16px;color:#fff;padding:38px 42px;margin-bottom:26px;box-shadow:0 8px 24px rgba(14,33,64,.22)}
+.hero .kicker{font-size:12.5px;letter-spacing:2px;color:#7fd3e4;margin-bottom:8px}
+.hero h1{font-size:30px;line-height:1.35;margin-bottom:12px}
+.hero p{color:#d9e6f8;max-width:760px;font-size:15px}
+.hero .pills{margin-top:18px;display:flex;flex-wrap:wrap;gap:8px}
+.pill{display:inline-block;padding:3px 12px;border-radius:999px;font-size:12.5px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.25)}
+.pill.b{background:#0a8fa5;border-color:#39b8d0}
+/* ===== 标题 ===== */
+h2.sec{display:flex;align-items:center;gap:12px;font-size:23px;margin:44px 0 6px;color:#0e2140}
+h2.sec .num{flex:none;width:34px;height:34px;border-radius:9px;background:var(--blue);color:#fff;display:flex;align-items:center;justify-content:center;font-size:16px}
+h3{font-size:17.5px;color:#16457e;margin:22px 0 8px}
+.secdesc{color:var(--muted);font-size:14px;margin-bottom:16px}
+/* ===== 卡片与网格 ===== */
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:20px 22px;margin:14px 0}
+.grid{display:grid;gap:14px}
+.g2{grid-template-columns:repeat(auto-fit,minmax(320px,1fr))}
+.g3{grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+.card h4{font-size:15.5px;color:#0e2140;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.card h4 .dot{width:8px;height:8px;border-radius:50%;background:var(--blue2);flex:none}
+/* ===== 指标 ===== */
+.metric{border-radius:var(--radius);padding:16px 18px;text-align:center;background:#fff;border:1px solid var(--line)}
+.metric .v{font-size:26px;font-weight:700;color:var(--blue)}
+.metric .v small{font-size:14px;font-weight:600;color:var(--muted)}
+.metric .l{font-size:12.5px;color:var(--muted);margin-top:4px}
+.metric.up{border-top:3px solid var(--green)}
+.metric.mid{border-top:3px solid var(--amber)}
+.metric.dn{border-top:3px solid var(--red)}
+/* ===== 表格 ===== */
+table{width:100%;border-collapse:collapse;margin:12px 0;background:#fff;font-size:13.5px}
+th{background:#eef3fa;color:#1d3a66;text-align:left;padding:9px 12px;border:1px solid var(--line);font-weight:600}
+td{padding:8px 12px;border:1px solid var(--line);vertical-align:top}
+tr:nth-child(even) td{background:#fafcff}
+/* ===== 流图 ===== */
+.flow{display:flex;align-items:stretch;gap:0;flex-wrap:wrap;margin:16px 0}
+.node{background:#fff;border:1.5px solid var(--blue2);border-radius:10px;padding:10px 14px;text-align:center;min-width:130px;font-size:13px}
+.node b{display:block;font-size:14.5px;color:#0e2140}
+.node small{color:var(--muted);font-size:11.5px}
+.node.gate{border-color:var(--amber);background:var(--amberbg)}
+.node.gate b{color:var(--amber)}
+.node.dom{border-color:var(--violet);background:var(--violetbg)}
+.node.dom b{color:var(--violet)}
+.arr{align-self:center;color:var(--muted);font-size:18px;padding:0 6px}
+/* ===== Gate ===== */
+.gate{border-left:5px solid var(--amber);border-radius:10px;background:#fff;border:1px solid var(--line);border-left-width:5px;padding:16px 20px;margin:14px 0}
+.gate.pass{border-left-color:var(--green)}
+.gate h4{color:var(--amber);font-size:16px;margin-bottom:4px}
+.gate.pass h4{color:var(--green)}
+.gate ul{margin:8px 0 4px 0;padding-left:20px;font-size:13.5px}
+.gate ul li{margin:3px 0}
+/* ===== Agent卡 ===== */
+.agent{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:18px 20px;position:relative}
+.agent .role{display:inline-block;font-size:11px;padding:2px 10px;border-radius:999px;background:var(--blue);color:#fff;letter-spacing:1px}
+.agent.dom2 .role{background:var(--violet)}
+.agent.dom3 .role{background:var(--cyan)}
+.agent h4{font-size:16.5px;color:#0e2140;margin:8px 0 2px}
+.agent .tagline{color:var(--muted);font-size:12.5px;margin-bottom:8px}
+.agent dl{font-size:13px;margin:0}
+.agent dt{font-weight:600;color:#1d3a66;margin-top:8px;font-size:12px}
+.agent dd{margin:2px 0 0;color:#33455f}
+/* ===== 时间线 ===== */
+.tl{border-left:3px solid var(--blue);margin:18px 0 8px 8px;padding-left:22px}
+.tl .step{position:relative;margin-bottom:22px}
+.tl .step::before{content:"";position:absolute;left:-29px;top:6px;width:13px;height:13px;border-radius:50%;background:var(--blue2);border:3px solid #fff;box-shadow:0 0 0 2px var(--blue2)}
+.tl .step h4{font-size:15.5px;color:#0e2140}
+.tl .step .ph{font-size:11.5px;color:var(--blue2);letter-spacing:1px}
+/* ===== 提示块 ===== */
+.note{border-radius:10px;padding:12px 16px;font-size:13.5px;margin:12px 0}
+.note.warn{background:var(--amberbg);border:1px solid #ecd9a8;color:#6b4a0a}
+.note.info{background:var(--cyanbg);border:1px solid #c3e6ec;color:#0b5560}
+.note.danger{background:var(--redbg);border:1px solid #f0c9c9;color:#7c1f1f}
+.note.ok{background:var(--greenbg);border:1px solid #c5e6d3;color:#14532d}
+/* ===== 目录树 ===== */
+pre.tree{background:#0e2140;color:#c9d9f0;border-radius:10px;padding:16px 18px;font-family:"SF Mono",Menlo,Consolas,"Courier New",monospace;font-size:12.5px;line-height:1.65;overflow-x:auto;margin:12px 0}
+pre.tree .cm{color:#5e7fa8}
+/* ===== 其他 ===== */
+.tag{display:inline-block;font-size:11.5px;padding:1px 9px;border-radius:6px;margin-right:6px;background:#eef3fa;color:#1d3a66;border:1px solid var(--line)}
+kbd{background:#0e2140;color:#7fd3e4;padding:1px 7px;border-radius:5px;font-size:12px;font-family:inherit}
+footer{margin-top:50px;padding-top:18px;border-top:1px solid var(--line);color:var(--muted);font-size:12.5px;text-align:center}
+@media(max-width:900px){
+  .sidebar{position:static;width:auto;max-height:none;padding:10px}
+  .sidebar nav{display:flex;flex-wrap:wrap;gap:2px}
+  .sidebar nav a{padding:6px 10px;border-left:none;font-size:12.5px}
+  .sidebar .brand{padding:8px 12px}
+  .sidebar nav .grp{display:none}
+  .main{margin-left:0;padding:16px}
+  .hero{padding:26px 20px}
+  h2.sec{font-size:20px}
+}
+</style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="brand"><b>星澜智能科技</b><small>SubAgents 工程化交付体系</small></div>
+  <nav>
+    <span class="grp">方案</span>
+    <a href="#s0">方案摘要</a>
+    <a href="#s1">01 · 现状诊断</a>
+    <a href="#s2">02 · 解决方案总览</a>
+    <span class="grp">组织</span>
+    <a href="#s3">03 · 工程产出物目录规范</a>
+    <a href="#s4">04 · 三域协作结构</a>
+    <span class="grp">流水线</span>
+    <a href="#s5">05 · 全生命周期流水线</a>
+    <a href="#s6">06 · 质量 Gate</a>
+    <span class="grp">落地</span>
+    <a href="#s7">07 · 实施路线图</a>
+    <a href="#s8">08 · 验收对照</a>
+    <a href="#s9">附录 · SOP 模板</a>
+  </nav>
+</aside>
+
+<main class="main">
+<div class="wrap">
+
+<!-- ============ HERO ============ -->
+<section class="hero">
+  <div class="kicker">星澜智能科技 · CODING 解决方案</div>
+  <h1>SubAgents 工程化交付体系<br>以一支 Agent 团队取代四支职能团队的串行接力</h1>
+  <p>依据《星澜科技需求》与《AI 工程概论》，将「产品 / Coding / 质检 / 项目管理」四支职能团队的边界损耗，重构为一名 FDE（融合交付工程师）指挥的三域 SubAgents 团队。人只在两端做判断——定义标准、验收结果；中间执行全部交给 Agent 按 SOP 完成。</p>
+  <div class="pills">
+    <span class="pill">1 名 FDE × 10 席 Agent</span>
+    <span class="pill b">三域：项目管理 / Coding / 品控</span>
+    <span class="pill">双仓：ai-assets × &lt;project&gt;</span>
+    <span class="pill">五阶段流水线 × 六道质量 Gate</span>
+    <span class="pill">有罪推定：证据不足即退回</span>
+    <span class="pill">PDCA 管理循环：不跳步 · 不带病交付</span>
+    <span class="pill">安全铁律：凭据用而不见</span>
+    <span class="pill">AI 覆盖率 20% → 70% → 90%+</span>
+    <span class="pill">人均项目数 N人/1项目 → 1人/3项目+</span>
+  </div>
+</section>
+
+<!-- ============ 方案摘要 ============ -->
+<section id="s0">
+  <h2 class="sec"><span class="num">摘</span>方案摘要</h2>
+  <p class="secdesc">三句话看懂本方案：诊断结论、组织重构、量化目标。</p>
+
+  <div class="card">
+    <h4><span class="dot"></span>核心判断</h4>
+    <p>星澜的交付瓶颈不是「人不够努力」，而是<strong>组织形态</strong>：四个职能团队串行接力，信息在人的层层翻译中持续损耗。缺的不是 Agent、不是场景、不是 Token，而是<strong>工程化</strong>——可复制、可衡量、不因人而异的交付体系。</p>
+  </div>
+
+  <div class="grid g3" style="margin-top:14px">
+    <div class="metric up"><div class="v">10 <small>席</small></div><div class="l">SubAgents 团队：三域十席，替代四支职能团队</div></div>
+    <div class="metric up"><div class="v">6 <small>道</small></div><div class="l">质量 Gate：有罪推定，证据不足即退回</div></div>
+    <div class="metric mid"><div class="v">≤50%</div><div class="l">并行编排耗时目标：≤ 串行耗时的 50%</div></div>
+  </div>
+
+  <div class="grid g3" style="margin-top:14px">
+    <div class="metric up"><div class="v">≥95%</div><div class="l">测试四层（单元/集成/E2E/性能）业务覆盖率</div></div>
+    <div class="metric up"><div class="v">≤30<small> 分钟</small></div><div class="l">新环境部署 + 冒烟测试</div></div>
+    <div class="metric mid"><div class="v">&gt;90%</div><div class="l">各质量 Gate 通过率</div></div>
+  </div>
+
+  <div class="note info"><b>实施前提：</b>需求稳定是整套体系的前提。需求频繁变更的项目，先做需求深访、用 MoSCoW 冻结需求基线，再进入流水线。首期「先串后并」——先以串行走通五阶段，再并行提速。</div>
+</section>
+
+<!-- ============ 01 现状诊断 ============ -->
+<section id="s1">
+  <h2 class="sec"><span class="num">01</span>现状诊断</h2>
+  <p class="secdesc">五十人规模的软件定制公司，按「产品 → Coding → 质检 → 项目管理」四支职能团队串行接力交付。客户以物流、制造行业为主（物流 EHS 平台、设备监控系统、合规文档系统）。编码交付长期受制于四个职能团队之间的边界损耗，本质是四个「重复劳动黑洞」。</p>
+
+  <div class="grid g2">
+    <div class="card">
+      <h4><span class="dot"></span>① 需求在层层翻译中失真</h4>
+      <p>给物流客户做 EHS 平台，客户口头说的是「危化品告警」，写进 PRD 变成了通用阈值告警，上线演示当天才发现客户要的是<strong>分区联动的应急处置流程</strong>——就这一个词，返工近一个月。需求评审来回拉锯三四轮是常态。</p>
+      <p style="margin-top:8px"><span class="tag">病根</span>信息从客户 → 产品 → Coding → 验收，每一层翻译都是一次损耗；「人」成了链条中最不稳定、最难校准的环节。</p>
+    </div>
+    <div class="card">
+      <h4><span class="dot"></span>② 编码在重复造轮子中内耗</h4>
+      <p>登录、权限、消息推送、报表导出——每个新项目都从零重写一遍。粗算下来新项目里<strong>过半代码</strong>与上一个项目高度相似，但一直没人有余力把这些东西沉淀成可复用的资产。</p>
+      <p style="margin-top:8px"><span class="tag">病根</span>CRUD、接口、表设计等模式化劳动高度重复；经验没有资产化，资产没有版本化，Agent 没有上下文可加载。</p>
+    </div>
+    <div class="card">
+      <h4><span class="dot"></span>③ 测试在工期压力下被牺牲</h4>
+      <p>排期一紧，先压缩的就是测试，只保核心路径过一遍。这两年交付的项目，不少在上线后头一两个月都是客户现场边用边修，<strong>售后返修吃掉了团队大量工时</strong>。</p>
+      <p style="margin-top:8px"><span class="tag">病根</span>质量靠人盯不靠机制兜底；没有评估闭环，产出不合格没有拦截，直接流向下游与客户。</p>
+    </div>
+    <div class="card">
+      <h4><span class="dot"></span>④ 经验随人员流动而流失</h4>
+      <p>去年一名核心开发离职，他手上几个项目的关键逻辑大多在他脑子里，接手的同事<strong>拖了一个多月</strong>才敢动第一个需求。</p>
+      <p style="margin-top:8px"><span class="tag">病根</span>组织记忆装在个人脑子里，不在系统里；能力的私有属性导致「人走，经验清零」。</p>
+    </div>
+  </div>
+
+  <h3>量化基线（合作前）</h3>
+  <div class="grid g3">
+    <div class="metric dn"><div class="v">≈20%</div><div class="l">编码交付环节 AI 覆盖率</div></div>
+    <div class="metric dn"><div class="v">N人 / 1项目</div><div class="l">人均项目数：一个项目需要一支团队</div></div>
+    <div class="metric dn"><div class="v">串行</div><div class="l">四职能接力，无并行编排、无质量 Gate</div></div>
+  </div>
+
+  <div class="note danger"><b>本质判断：术已就位，治未跟上。</b>方法、工具、SOP 不是没有，而是组织形态没变——部门仍按职能分，执行仍靠人，经验仍随人走，验收仍靠自觉。工程化还没有成为硬约束，因此「拒绝标准化」与「以招人堆产能」两类反工程化行为会持续把组织拉回老路。本方案的第一性目标：<strong>重构交付组织形态</strong>，而不是增加工具。</div>
+
+  <div class="grid g2">
+    <div class="card">
+      <h4><span class="dot"></span>对标 AI 工程化三大命题</h4>
+      <ul style="padding-left:20px;font-size:13.5px">
+        <li><b>可复制：</b>否——成功项目经验没有沉淀为模板与 Skill，下一个项目从零手搓。</li>
+        <li><b>可衡量：</b>否——产出按人天工时衡量，没有 AI 覆盖率、人均项目数、Token 计量。</li>
+        <li><b>不因人而异：</b>否——同一件事换个接手的人，结果与周期天差地别。</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4><span class="dot"></span>对标 AI Native 成熟度</h4>
+      <p>按五维 AI 原生度自测，星澜当前处于 <b>L0–L1（传统/试点组织）</b>：AI 是外挂，个别员工私下提效；有 POC 但普遍卡在死亡谷；资产未入库、SOP 写给「人」、计量口径仍是人天。本方案的目标是把组织形态推向 <b>L2（工程化组织）</b>，并向 L3（组织长在 AI 上）迈进。</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 02 解决方案总览 ============ -->
+<section id="s2">
+  <h2 class="sec"><span class="num">02</span>解决方案总览</h2>
+  <p class="secdesc">用工程化方法重构交付组织形态：一支 SubAgents 团队取代四支职能团队的串行接力，一名 FDE 在两端（定义标准、验收结果）做判断，中间执行全部交给 Agent 按 SOP 完成。</p>
+
+  <h3>范式翻转：从「人肉串行接力」到「一人指挥的 Agent 团队」</h3>
+  <div class="grid g2">
+    <div class="card">
+      <h4><span class="dot" style="background:var(--red)"></span>旧模式：四队串行接力</h4>
+      <div class="flow">
+        <div class="node"><b>产品</b><small>翻译需求</small></div><span class="arr">→</span>
+        <div class="node"><b>Coding</b><small>写代码</small></div><span class="arr">→</span>
+        <div class="node"><b>质检</b><small>被压缩</small></div><span class="arr">→</span>
+        <div class="node"><b>项目管理</b><small>催进度</small></div>
+      </div>
+      <p style="font-size:13.5px;color:var(--muted)">每一层交接都是一次翻译损耗；人站在流程中间充当信息介质，SOP 面向「人」编写，结果因执行者而异。</p>
+    </div>
+    <div class="card">
+      <h4><span class="dot" style="background:var(--green)"></span>新模式：FDE 两端 + SubAgents 中间</h4>
+      <div class="flow">
+        <div class="node dom"><b>FDE（人）</b><small>校准者 · 编排者 · 验收者</small></div><span class="arr">↔</span>
+        <div class="node"><b>SubAgents</b><small>三域十席，按 SOP 执行</small></div><span class="arr">→</span>
+        <div class="node"><b>客户</b><small>验收交付</small></div>
+      </div>
+      <p style="font-size:13.5px;color:var(--muted)">人从流程中段撤出、站到两端：上游把模糊需求定义成 Agent 可执行的清晰标准，下游检查产出是否达标。中间全部交给 Agent。</p>
+    </div>
+  </div>
+
+  <h3>团队编成：三域十席</h3>
+  <div class="flow" style="margin:10px 0 6px">
+    <div class="node dom" style="min-width:150px"><b>项目管理域</b><small>编排中枢</small><br><small>PMAgent · ProductAgent<br>ArchitectAgent · DistillAgent</small></div>
+    <span class="arr">⇄</span>
+    <div class="node" style="min-width:150px"><b>Coding 域</b><small>执行</small><br><small>BackendAgent · FrontendAgent<br>ApiAgent</small></div>
+    <span class="arr">⇄</span>
+    <div class="node gate" style="min-width:150px"><b>品控域</b><small>质量把关（独立）</small><br><small>QAAgent · ReviewAgent · DeployAgent</small></div>
+  </div>
+  <table>
+    <tr><th>域</th><th>Agent</th><th>定位</th><th>对旧职能</th></tr>
+    <tr><td rowspan="4"><b>项目管理域</b></td><td>PMAgent</td><td>编排中枢：流水线调度、任务派发、并行编排、异常降级</td><td>项目管理团队</td></tr>
+    <tr><td>ProductAgent</td><td>需求收敛：深访、MoSCoW、PRD、需求基线冻结</td><td>产品团队</td></tr>
+    <tr><td>ArchitectAgent</td><td>技术蓝图：架构、数据模型、接口契约、任务拆包</td><td>技术负责人</td></tr>
+    <tr><td>DistillAgent</td><td>复盘沉淀：四维复盘、经验蒸馏为 Skill / 模板，更新资产库</td><td>经验传承（原本缺失）</td></tr>
+    <tr><td rowspan="3"><b>Coding 域</b></td><td>BackendAgent</td><td>后端实现：数据表、服务、业务逻辑，单元测试自证</td><td>后端开发</td></tr>
+    <tr><td>FrontendAgent</td><td>前端实现：界面、交互、组件复用</td><td>前端开发</td></tr>
+    <tr><td>ApiAgent</td><td>接口：契约先行 → Mock → 联调，接口文档自动生成</td><td>接口开发</td></tr>
+    <tr><td rowspan="3"><b>品控域</b></td><td>QAAgent</td><td>质量 Gate：四层测试生成与执行、覆盖率计量、证据核验</td><td>质检团队</td></tr>
+    <tr><td>ReviewAgent</td><td>独立评审：代码走查、需求可追溯性、安全合规检查</td><td>评审（原本缺失）</td></tr>
+    <tr><td>DeployAgent</td><td>部署交付：环境编排、冒烟测试、运维/用户文档生成</td><td>运维/实施</td></tr>
+  </table>
+  <div class="note info"><b>品控域独立于 Coding 域：</b>质量 Gate 不允许「自产自评」。QAAgent / ReviewAgent 不向 Coding 域汇报，直接对 PMAgent 与 FDE 负责，保证「有罪推定、证据自证清白」的立场不被利益稀释。</div>
+
+  <h3>支撑体系的三大支柱</h3>
+  <div class="grid g3">
+    <div class="card">
+      <h4><span class="dot"></span>资产库：代码库 + Agent 库</h4>
+      <p style="font-size:13.5px">把登录/权限/推送/报表导出等模式化模块沉淀为可复用资产；把每一份 SOP、模板、Skill 按代码库方式管理（目录、README、Git、PR）。<b>可复制性 = 组织的可复制性</b>——新项目装载资产包，而不是从零手搓。组织级资产库 <b>ai-assets</b> 与项目级工作区 <b>&lt;project&gt;</b> 物理分离、各自独立 Git 仓库，目录规范见 §03。</p>
+    </div>
+    <div class="card">
+      <h4><span class="dot"></span>流程库：面向 Agent 的 SOP 2.0</h4>
+      <p style="font-size:13.5px">SOP 写给 Agent，不写给人：每份含四要素（触发场景 / 调用步骤 / 输入规范 / 产出验收）。Agent 没有情绪、不会遗忘、不跳槽，SOP 可以写到「一字不差地执行」的精度。</p>
+    </div>
+    <div class="card">
+      <h4><span class="dot"></span>运行总线：Token 治理 + 计量看板</h4>
+      <p style="font-size:13.5px">按项目/Agent 分组配 Token 额度、实时核算消耗；工程化计量看板按月晾晒（AI 覆盖率、人均项目数、Gate 通过率、Token 产出比），进月度经营会。</p>
+    </div>
+  </div>
+
+  <h3>目标指标</h3>
+  <table>
+    <tr><th>指标</th><th>现状</th><th>合作后</th><th>持续牵引</th></tr>
+    <tr><td>AI 覆盖率（编码交付环节）</td><td>≈20%</td><td>70%</td><td>90%+</td></tr>
+    <tr><td>人均项目数</td><td>N人 / 1项目</td><td>1人 / 1项目</td><td>1人 / 3项目+</td></tr>
+    <tr><td>质量 Gate 通过率</td><td>无 Gate</td><td>&gt;90%</td><td>持续 &gt;90%</td></tr>
+    <tr><td>测试业务覆盖率（四层）</td><td>核心路径过一遍</td><td>≥95%</td><td>≥95%</td></tr>
+    <tr><td>新环境部署 + 冒烟测试</td><td>数小时起</td><td>≤30 分钟</td><td>≤30 分钟</td></tr>
+    <tr><td>并行编排耗时</td><td>无并行</td><td>≤ 串行 50%</td><td>持续压缩</td></tr>
+    <tr><td>换人一致性（不因人而异）</td><td>因人而异</td><td>随机抽人驱动 Agent 产出一致</td><td>效果验收常态化</td></tr>
+  </table>
+
+  <h3>边界与安全底线</h3>
+  <div class="grid g2">
+    <div class="card">
+      <h4><span class="dot"></span>覆盖范围</h4>
+      <p style="font-size:13.5px">所有<strong>新立项</strong>定制开发项目，从需求到部署全流程按新体系交付；存量项目维持现有维护模式，不回头改造。</p>
+    </div>
+    <div class="card">
+      <h4><span class="dot"></span>安全铁律（不可妥协）</h4>
+      <p style="font-size:13.5px"><strong>所有账号、密码、API 密钥等凭据，一律只在本地配置和使用，零穿透到大模型服务。</strong>Agent「使用」凭据但从不「看见」凭据——凭据不出现在 prompt、上下文、日志、复盘记录里。通过本地 .env.local、MCP 工具授权与沙箱隔离实现：Agent 只能通过受控工具调用凭据完成鉴权，无法读取明文、也无法把凭据带入对话。ReviewAgent 设凭据泄露扫描 Gate（G-sec），发现明文凭据即拦截并告警。</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 03 工程产出物目录规范 ============ -->
+<section id="s3">
+  <h2 class="sec"><span class="num">03</span>工程产出物目录规范（双仓架构）</h2>
+  <p class="secdesc">所有工程产出物——需求、设计、代码、测试、Gate 证据、复盘——一律按目录规范落位。组织级资产库 <b>ai-assets</b> 与项目级工作区 <b>&lt;project&gt;</b> 物理分离、各自独立 Git 仓库；<b>目录名即语义</b>；<b>每层 README 索引</b>；根目录 <b>OPCTEAM.md</b> 作为 Agent 进入即读的上下文锚点。</p>
+
+  <h3>双仓架构：物理分离，各成一体</h3>
+  <div class="flow" style="margin-bottom:8px">
+    <div class="node dom" style="min-width:180px"><b>ai-assets（组织级）</b><small>资产库 · 跨项目共享 · 只读消费</small></div>
+    <span class="arr">⇄</span>
+    <div class="node gate" style="min-width:180px"><b>&lt;project&gt;（项目级）</b><small>工作区 · 每项目一仓 · 交付归档</small></div>
+  </div>
+  <table>
+    <tr><th style="width:120px">维度</th><th>ai-assets（组织级资产库）</th><th>&lt;project&gt;（项目级工作区）</th></tr>
+    <tr><td>定位</td><td>组织记忆：规约、SOP 2.0、模板、可复用组件、Agent 库、Skill</td><td>单项目全部产出物：需求、设计、代码、测试、Gate 证据、复盘</td></tr>
+    <tr><td>生命周期</td><td>常驻；随使用持续加厚，是复利的载体</td><td>随项目立项创建；交付后归档冻结</td></tr>
+    <tr><td>访问方式</td><td>跨项目共享、只读消费；变更走 PR + ReviewAgent 审批</td><td>项目内可写；主干合并以质量 Gate 通过为前提</td></tr>
+    <tr><td>Git 治理</td><td>独立仓库；变更审计、可回滚、不因人而异</td><td>独立仓库；凭据不入库；交付即版本</td></tr>
+  </table>
+  <div class="note info"><b>为什么必须物理分离：</b>资产库跨项目共享、只增不删、治理最严；项目工作区随交付归档、节奏快。混放会让「组织记忆」被项目临时产物污染，也让权限与审计边界消失。分离后，ai-assets 是只读的「母版」，&lt;project&gt; 是装载母版后生长出的「副本」——这正是「复制资产包，而非复制人」的物理落地。</div>
+
+  <h3>目录名即语义：命名规范</h3>
+  <table>
+    <tr><th style="width:190px">规则</th><th>说明</th><th style="width:230px">示例</th></tr>
+    <tr><td>kebab-case</td><td>目录与文件一律小写短横线，不用空格 / 中文 / 下划线混排</td><td>api-contracts / task-packages</td></tr>
+    <tr><td>产物按阶段 / 职责归位</td><td>文档进 docs/、代码进 src/、Gate 证据进 gate/，不按「文件类型 + 人名」散放</td><td>docs/design/architecture.json</td></tr>
+    <tr><td>两位数字前缀</td><td>需排序的编号目录用数字前缀，保证稳定排序</td><td>gate/g1-requirements … g6-acceptance</td></tr>
+    <tr><td>禁无语义目录</td><td>禁止 misc / other / tmp / 新建文件夹 等无信息量目录名</td><td>应为 components/auth 而非 misc/a</td></tr>
+    <tr><td>凭据固定名</td><td>密钥、账号、API Key 一律 .env.local，被 .gitignore 强制排除</td><td>.env.local（永不入库、永不入上下文）</td></tr>
+  </table>
+
+  <h3>ai-assets 目录结构（组织级资产库）</h3>
+  <pre class="tree">ai-assets/
+├── OPCTEAM.md            # 根锚点：Agent 进入即读（身份/边界/目录地图/SOP 指针/安全红线）
+├── README.md             # 资产库总索引：找什么、去哪层
+├── docs/                 # 方法论与规约
+│   ├── README.md
+│   ├── standards/        # coding-standards / test-standards / security-standards / naming-conventions
+│   ├── sop/              # SOP 2.0 库（面向 Agent，四要素）
+│   └── playbooks/        # 场景打法：物流 EHS / 设备监控 / 合规文档 行业模板
+├── templates/            # 可复制资产包：project/ 工作区模板、repo/ 仓库模板
+├── components/           # 可复用代码：auth/ rbac/ notification/ report-export/（各含 README + 测试）
+├── agents/               # Agent 库（即插即用，每席一目录 + SKILL.md + 专属 SOP）
+│   ├── README.md
+│   ├── pm-agent/  product-agent/  architect-agent/  distill-agent/
+│   ├── backend-agent/  frontend-agent/  api-agent/
+│   └── qa-agent/  review-agent/  deploy-agent/
+├── skills/               # 蒸馏产物：&lt;skill-name&gt;/SKILL.md，随使用增厚
+│   └── README.md
+└── metrics/              # 组织级计量模板与基线：gate-pass-rate / coverage / token</pre>
+
+  <h3>&lt;project&gt; 目录结构（项目级工作区，每项目一仓）</h3>
+  <pre class="tree">&lt;project&gt;/                     # 如 ehs-platform/
+├── OPCTEAM.md            # 根锚点：Agent 进入即读（项目身份/边界/目录地图/当前状态/验收标准）
+├── README.md             # 项目索引：怎么运行、关键文档指针
+├── docs/                 # 文档产出物（项目管理域 + 品控域）
+│   ├── README.md
+│   ├── requirements/     # ProductAgent：interview-notes/ PRD.md moscow.md baseline/
+│   ├── design/           # ArchitectAgent：architecture.json data-model/ api-contracts/ task-packages/
+│   ├── gate/             # QAAgent 证据包：g1-requirements/ … g6-acceptance/（每 Gate 一目录）
+│   ├── review/           # ReviewAgent：code-review/ traceability/ security/
+│   └── ops/              # DeployAgent：deployment/ runbook/ user-guide/
+├── src/                  # 代码产出物（Coding 域）
+│   ├── README.md
+│   ├── backend/          # BackendAgent：app/ services/ tests/
+│   ├── frontend/         # FrontendAgent：app/ components/ tests/
+│   ├── api/              # ApiAgent：openapi/ mocks/ tests/
+│   └── shared/           # 契约与共享类型（ApiAgent 发布，前后端消费）
+├── scripts/              # 构建/部署脚本：build/ deploy/ smoke-test/
+├── reports/              # 计量与复盘
+│   ├── metrics/          # 项目计量：覆盖率、Gate 通过率、Token 消耗
+│   ├── retrospective/    # DistillAgent 四维复盘
+│   └── distill/          # 待回写 ai-assets 的蒸馏产物（以 PR 提交）
+├── .env.local            # 凭据：仅本地，零穿透，不入 Git、不入 Agent 上下文
+└── .gitignore            # 强制排除 .env.local、临时文件、密钥</pre>
+
+  <h3>每层 README 索引</h3>
+  <div class="card">
+    <p>每个目录（至少到二级）必须有一份 README.md，作为该层的「门牌」——供人导航、供 Agent 定位。README 四要素：</p>
+    <ul style="padding-left:20px;font-size:13.5px;margin-top:8px">
+      <li><b>这层放什么：</b>目录职责一句话说清；</li>
+      <li><b>子目录用途：</b>每个子目录一行说明（目录名即语义，README 补上下文）；</li>
+      <li><b>命名与落位规则：</b>什么产物进这里、怎么命名；</li>
+      <li><b>质量指针：</b>本层产出对应哪道 Gate、由哪个 Agent 验收。</li>
+    </ul>
+  </div>
+
+  <h3>OPCTEAM.md：Agent 进入即读的上下文锚点</h3>
+  <div class="card">
+    <p>每个仓库（ai-assets 与每个 &lt;project&gt;）根目录必须存在 OPCTEAM.md。任何 Agent 开始任何任务前，第一步是读取所在仓库的 OPCTEAM.md——它一次讲清五件事：</p>
+    <ul style="padding-left:20px;font-size:13.5px;margin-top:8px">
+      <li><b>仓库身份与边界：</b>这是资产库还是哪个项目；允许做什么、禁止做什么；</li>
+      <li><b>目录地图：</b>产出去哪、输入从哪取（与各层 README 互为入口）；</li>
+      <li><b>关键 SOP 指针：</b>本场景对应的 SOP 2.0 位置（ai-assets/docs/sop/…）；</li>
+      <li><b>当前状态与验收标准：</b>项目所处阶段、Gate 状态、验收条件；</li>
+      <li><b>安全红线：</b>凭据仅本地 .env.local、零穿透大模型服务；Agent 用而不见——凭据不入 prompt / 上下文 / 日志 / 复盘记录。</li>
+    </ul>
+    <p style="margin-top:10px;font-size:13.5px;color:var(--muted)">OPCTEAM.md 是「不因人而异」的技术起点：任何人驱动任何 Agent，进入仓库先读同一份锚点，上下文不再依赖操作者的口头描述。</p>
+  </div>
+
+  <h3>Git 治理与效果验收</h3>
+  <div class="grid g3">
+    <div class="card"><h4><span class="dot"></span>ai-assets · PR 审批</h4><p style="font-size:13.5px">变更走 Pull Request + ReviewAgent 审批后合并，历史可回滚；组件 / SOP / Skill 入库即组织资产，不随人走。</p></div>
+    <div class="card"><h4><span class="dot"></span>&lt;project&gt; · Gate 合并</h4><p style="font-size:13.5px">主干合并以质量 Gate 通过为前提；G1–G6 证据归档进 gate/ 后才是可追溯的交付版本。</p></div>
+    <div class="card"><h4><span class="dot"></span>效果验收</h4><p style="font-size:13.5px">随机抽人驱动 Agent 从 OPCTEAM.md 进入同一仓库，比对产出一致性——检验目录规范与锚点是否真的「不因人而异」。</p></div>
+  </div>
+</section>
+
+<!-- ============ 04 三域协作结构 ============ -->
+<section id="s4">
+  <h2 class="sec"><span class="num">04</span>三域协作结构</h2>
+  <p class="secdesc">十席 Agent 按「项目管理域（编排中枢）→ Coding 域（执行）→ 品控域（质量把关）」三域组织。PMAgent 是唯一的编排中枢，向两端辐射：向上对接 FDE 的标准与验收，向下调度 Coding 域执行、接受品控域闸门裁决。</p>
+
+  <h3>FDE（人）：唯一的人机界面</h3>
+  <div class="card">
+    <p><b>FDE = 行业经验 × Agent 编排能力 × 工程化交付方法。</b>人不在流程中间，只在两端：</p>
+    <div class="grid g3" style="margin-top:10px">
+      <div class="note ok"><b>上游 · 校准者：</b>把客户的模糊需求定义成 Agent 可执行的清晰标准——验收条件可度量、SOP 无歧义、契约先行。</div>
+      <div class="note info"><b>中段 · 编排者：</b>审阅 PMAgent 的任务拆包与 Gate 裁决，处理异常升级事项（超过最大重试次数、跨域争议、需求变更）。</div>
+      <div class="note ok"><b>下游 · 验收者：</b>依据 G6 证据包做最终验收；随机抽人驱动 Agent 校验「不因人而异」；批准上线与移交。</div>
+    </div>
+    <p style="margin-top:10px;font-size:13.5px;color:var(--muted)">FDE 不需要写代码。他写的是自然语言指令、验收清单与 Gate 规则——AI 负责把指令翻译成代码、测试与部署。</p>
+  </div>
+
+  <h3>项目管理域：编排中枢</h3>
+  <table>
+    <tr><th style="width:120px">Agent</th><th>核心职责</th><th style="width:190px">关键输入</th><th style="width:190px">标准产出</th></tr>
+    <tr>
+      <td><b>PMAgent</b><br><span class="tag">编排中枢</span></td>
+      <td>统筹五阶段流水线；把架构任务包派发给 Coding 域与品控域；维护依赖关系与并行调度；冲突避让（公共库锁/分支）；异常降级与硬超时裁决；维护全景看板；向 FDE 上报 Gate 裁决与风险。</td>
+      <td>FDE 立项单、各 Agent 产出、Gate 报告、Token 额度</td>
+      <td>流水线调度单、任务派发单、依赖图、风险与降级记录、全景看板</td>
+    </tr>
+    <tr>
+      <td><b>ProductAgent</b><br><span class="tag">需求收敛</span></td>
+      <td>需求深访（5Why 追问，把「危化品告警」这类口语挖成「分区联动应急处置」的深层痛点）；MoSCoW 输出需求清单并冻结基线；三段式 PRD（背景 + 约束 + 验收标准）；歧义检测与可度量验收条件。</td>
+      <td>客户访谈记录、原始诉求、行业速览</td>
+      <td>MoSCoW 需求清单、PRD（含可度量验收条件）、需求基线冻结单</td>
+    </tr>
+    <tr>
+      <td><b>ArchitectAgent</b><br><span class="tag">技术蓝图</span></td>
+      <td>从 PRD 到编码蓝图：分层设计、模块划分、数据模型、接口契约、技术选型建议；任务拆包——每个任务包 ≤2 人天，含独立输入/输出契约与验收标准。</td>
+      <td>PRD、需求基线、资产库中可复用组件清单</td>
+      <td>架构图（JSON）、数据模型、接口定义（YAML）、任务包清单</td>
+    </tr>
+    <tr>
+      <td><b>DistillAgent</b><br><span class="tag">复盘沉淀</span></td>
+      <td>项目收尾四维复盘（提效 / 质量 / 成本 / 经验）；将 ≥3 条可复用经验蒸馏为 Skill 与模板；回写 ai-assets（代码库 / Agent 库 / SOP）；归档效果验收数据，供下一个项目装载。</td>
+      <td>G1–G6 全部证据包、Gate 失败数据、Token 消耗统计</td>
+      <td>四维复盘报告、新增 Skill/模板清单、ai-assets 更新提交（PR）</td>
+    </tr>
+  </table>
+
+  <h3>管理域工作过程：PDCA 四步循环（不得跳步 · 不得带病交付）</h3>
+  <p class="secdesc">项目管理域由 PMAgent 主持，以 PDCA 驱动每个阶段与整条五阶段流水线：Plan 定目标 → Do 按 SOP 执行 → Check 用质量 Gate 与量化指标核验 → Act 达标放行并复盘沉淀。四步严格顺序执行，不得跳步；Check 未通过不得放行，不得带病交付。</p>
+
+  <div class="flow" style="margin-bottom:8px">
+    <div class="node"><b>P · Plan</b><small>定目标：阶段计划 / 任务派发单 / Token 预算 / 量化目标</small></div><span class="arr">→</span>
+    <div class="node"><b>D · Do</b><small>按 SOP 执行：派发 Coding / 品控，全程采集数据</small></div><span class="arr">→</span>
+    <div class="node"><b>C · Check</b><small>Gate 核验：证据自证清白，量化比对目标</small></div><span class="arr">→</span>
+    <div class="node gate"><b>A · Act</b><small>达标放行 + 复盘蒸馏，回写下一轮 Plan</small></div>
+  </div>
+
+  <div class="note danger"><b>三条铁律：</b>① <b>不得跳步</b>——P→D→C→A 严格顺序执行；上一轮 Act 未完成（复盘未沉淀、数据未回写资产库）不得开启下一轮 Plan。② <b>不得带病交付</b>——Check 检出缺陷未清零的产出不得放行；确需放行的已知风险必须登记为豁免项、由 FDE 签字批准，并进入 Act 的整改清单。③ <b>Check 不合格即退回</b>——退回 Do 修复，重跑 Check，直至达标或升级 FDE。</div>
+
+  <h4 style="margin:16px 0 6px;color:#16457e">每步的量化反馈：五指标</h4>
+  <table>
+    <tr><th style="width:120px">指标</th><th>定义 / 口径</th><th style="width:130px">采集方</th><th style="width:190px">PDCA 中的用途</th></tr>
+    <tr><td>进度</td><td>完成任务包数 ÷ 总任务包数；阶段耗时 vs 计划</td><td>PMAgent 全景看板</td><td>P 定目标；C 偏差比对；A 工期复盘</td></tr>
+    <tr><td>Gate 通过率</td><td>通过 Gate 数 ÷ 应过 Gate 数（目标 &gt;90%）</td><td>QAAgent</td><td>C 质量闸；A 质量复盘</td></tr>
+    <tr><td>Token 消耗</td><td>本阶段消耗 vs 预算（按项目 / Agent 分组核算）</td><td>Token 治理总线</td><td>P 预算分配；A 成本复盘</td></tr>
+    <tr><td>Bug 数</td><td>C 阶段检出 Bug 总数与清零趋势</td><td>QAAgent / ReviewAgent</td><td>C 判定「不带病」；A 修复复盘</td></tr>
+    <tr><td>覆盖率</td><td>四层测试业务覆盖率（门禁 ≥95%）</td><td>QAAgent</td><td>C 质量闸；A 测试复盘</td></tr>
+  </table>
+  <div class="note info"><b>量化反馈即 PDCA 的证据链：</b>Plan 的目标就是 Check 的比对基线，Check 的数据就是 Act 复盘的输入——每步的看板读数同时构成该阶段 Gate 的证据包。PMAgent 向 FDE 上报的正是这五组数字，FDE 的验收（Act 放行）也以这五组数字为准。</div>
+
+  <h3>Coding 域：执行</h3>
+  <table>
+    <tr><th style="width:120px">Agent</th><th>核心职责</th><th style="width:190px">关键输入</th><th style="width:190px">标准产出</th></tr>
+    <tr>
+      <td><b>BackendAgent</b><br><span class="tag">后端</span></td>
+      <td>按任务包契约实现数据表、服务层与业务逻辑；以约束型提示词 + 代码库上下文注入驱动，产出与项目风格一致；自带单元测试自证；执行「读 → 改 → 测」闭环。</td>
+      <td>任务包契约、数据模型、编码规约、测试规范</td>
+      <td>后端代码 + 单元测试 + 自证报告（编译/Lint/单测通过）</td>
+    </tr>
+    <tr>
+      <td><b>FrontendAgent</b><br><span class="tag">前端</span></td>
+      <td>按接口契约实现界面与交互；复用资产库组件（登录/权限/报表等）；原型描述落地为可交付前端；组件级测试自证。</td>
+      <td>任务包契约、接口定义、UI 原型描述、组件库</td>
+      <td>前端代码 + 组件测试 + 自证报告</td>
+    </tr>
+    <tr>
+      <td><b>ApiAgent</b><br><span class="tag">接口</span></td>
+      <td>契约先行：先产出 OpenAPI 定义 → 生成 Mock → 联调；保证前后端只认契约、不认人；接口测试用例生成与执行；接口文档自动生成。</td>
+      <td>接口契约 YAML、业务字段定义、错误码规范</td>
+      <td>OpenAPI 定义、Mock 服务、接口测试报告、API 文档</td>
+    </tr>
+  </table>
+
+  <h3>品控域：质量 Gate（独立于 Coding 域）</h3>
+  <table>
+    <tr><th style="width:120px">Agent</th><th>核心职责</th><th style="width:190px">关键输入</th><th style="width:190px">标准产出</th></tr>
+    <tr>
+      <td><b>QAAgent</b><br><span class="tag">质量 Gate</span></td>
+      <td>执行 G1–G5 全部 Gate 检查；生成并运行四层测试（单元 / 集成 / E2E / 性能）；计量业务覆盖率（≥95% 门禁）；收集并核验「证据包」，有罪推定：证据不足即退回。</td>
+      <td>各阶段产出、测试规范、覆盖率基线、Gate 规则</td>
+      <td>Gate 裁决报告、四层测试结果、覆盖率计量、缺陷清单</td>
+    </tr>
+    <tr>
+      <td><b>ReviewAgent</b><br><span class="tag">独立评审</span></td>
+      <td>代码走查（结构与安全）；需求可追溯性检查（需求 → 用例 → 代码 逐条闭环）；安全合规检查（OWASP 高风险项）；凭据泄露扫描（发现明文账号/密码/API Key 即拦截并告警）；不通过退回并附证据。</td>
+      <td>代码、PRD、测试用例、安全基线</td>
+      <td>评审报告、可追溯矩阵、安全扫描结果、退回单</td>
+    </tr>
+    <tr>
+      <td><b>DeployAgent</b><br><span class="tag">部署交付</span></td>
+      <td>环境编排与部署脚本；新环境部署 + 冒烟测试 ≤30 分钟；回滚预案；自动生成 API 文档、运维手册、用户指南（完整性 ≥90%）；上线切换与移交。</td>
+      <td>G4 通过的产物、环境清单、部署模板</td>
+      <td>部署记录、冒烟测试报告、文档三件套、上线移交单</td>
+    </tr>
+  </table>
+
+  <h3>各 Agent 的 SOP 2.0（面向 Agent · 四要素齐备）</h3>
+  <p class="secdesc">三域全部 10 席 Agent 各配一份 SOP，按四要素书写：<b>触发场景</b>（何时执行，条件无歧义）、<b>调用步骤</b>（先做什么后做什么）、<b>输入规范</b>（格式与校验，不清晰即拒）、<b>产出验收</b>（怎么判定做完且做好）。SOP 归档于 ai-assets/docs/sop/（文件名 <code>&lt;agent&gt;.sop.md</code>）；Agent 启动任务时先读所在仓库 OPCTEAM.md，再加载对应 SOP。产出验收即对应质量 Gate 的证据包构成，与 §05 Gate 一一挂接。</p>
+
+  <p style="font-weight:700;color:#16457e;margin:16px 0 6px">项目管理域 · SOP-01 ~ SOP-04</p>
+  <div class="grid g2">
+    <div class="card">
+      <h4><span class="dot"></span>PMAgent · 编排中枢 <span class="tag">SOP-01</span></h4>
+      <table>
+        <tr><th>触发场景</th><td>收到 FDE 立项单（目标/边界/Token 预算）；或 Gate 裁决需协调、Agent 超时/降级事件发生；或进入新的流水线阶段。</td></tr>
+        <tr><th>调用步骤</th><td>① 主持 PDCA：Plan 定阶段目标、派发单与 Token 预算；② 读项目 OPCTEAM.md 与需求基线；③ 依 G1→G6 排定阶段与任务派发单；④ 按任务包契约派发 Coding 域 / 品控域，登记依赖图；⑤ Check 后汇总 Gate 裁决与五指标读数（进度 / Gate 通过率 / Token 消耗 / Bug 数 / 覆盖率），Act 达标才放行、异常升级 FDE。</td></tr>
+        <tr><th>输入规范</th><td>立项单（JSON）、各 Agent 产出物、Gate 证据报告、Token 额度；缺契约字段即拒派发。</td></tr>
+        <tr><th>产出验收</th><td>调度单 / 派发单 / 风险记录齐全；依赖图无环；每个任务包含 ID、负责 Agent、I/O 契约与硬超时；每轮 PDCA 四步完整无跳步、无带病交付；五指标读数随证据包归档；FDE 可凭调度单复现全部执行路径。</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <h4><span class="dot"></span>ProductAgent · 需求收敛 <span class="tag">SOP-02</span></h4>
+      <table>
+        <tr><th>触发场景</th><td>新项目立项进入阶段①；或需求变更申请进入。</td></tr>
+        <tr><th>调用步骤</th><td>① 行业速览 15 分钟；② 5Why 深访挖底层痛点（「危化品告警」→「分区联动应急处置」）；③ MoSCoW 生成需求清单，每项附可度量验收条件；④ 三段式（背景 + 约束 + 验收标准）生成 PRD；⑤ 歧义检测，冻结需求基线。</td></tr>
+        <tr><th>输入规范</th><td>访谈记录、原始诉求清单、行业背景资料；诉求缺上下文时先补齐再产出，不凭口述脑补。</td></tr>
+        <tr><th>产出验收</th><td>MoSCoW 每项含优先级 + 验收条件；PRD 含功能/数据/接口/验收四部分；歧义检测 0 未澄清术语；基线冻结单签署；G1 证据包齐备。</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <h4><span class="dot"></span>ArchitectAgent · 技术蓝图 <span class="tag">SOP-03</span></h4>
+      <table>
+        <tr><th>触发场景</th><td>G1 需求基线通过，进入阶段②。</td></tr>
+        <tr><th>调用步骤</th><td>① 读 PRD 与需求基线；② 检索 ai-assets 可复用组件清单；③ 产出架构图（JSON）、数据模型、接口契约（YAML）；④ 任务拆包（≤2 人天，含 I/O 契约与验收标准）；⑤ 提交 G2 证据包。</td></tr>
+        <tr><th>输入规范</th><td>PRD、MoSCoW 清单、组件索引、技术栈规约；不接收未冻结的需求。</td></tr>
+        <tr><th>产出验收</th><td>架构 / 数据模型 / 接口契约与需求逐条可追溯；任务包全部 ≤2 人天且契约齐备；可复用组件优先装载而非重写；G2 检查项全绿。</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <h4><span class="dot"></span>DistillAgent · 复盘沉淀 <span class="tag">SOP-04</span></h4>
+      <table>
+        <tr><th>触发场景</th><td>项目 G6 通过或里程碑收尾；或某类失败数据累计达阈值。</td></tr>
+        <tr><th>调用步骤</th><td>① 收集 G1–G6 证据包与 Token 消耗；② 四维复盘（提效 / 质量 / 成本 / 经验）；③ 蒸馏 ≥3 条可复用经验为 Skill / 模板（四要素齐备）；④ 以 PR 提交 ai-assets；⑤ 归档效果验收数据。</td></tr>
+        <tr><th>输入规范</th><td>全部 Gate 证据、失败数据、Token 统计、复盘模板；只提交可复用、可验证的经验。</td></tr>
+        <tr><th>产出验收</th><td>复盘报告四维齐备；新增 Skill / 模板 ≥3 条且可被新项目直接装载；ai-assets PR 附评审通过记录；数据入库可检索。</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <p style="font-weight:700;color:#16457e;margin:16px 0 6px">Coding 域 · SOP-05 ~ SOP-07</p>
+  <div class="grid g2">
+    <div class="card">
+      <h4><span class="dot"></span>BackendAgent · 后端 <span class="tag">SOP-05</span></h4>
+      <table>
+        <tr><th>触发场景</th><td>收到 PMAgent 派发的后端任务包（G2 通过后）。</td></tr>
+        <tr><th>调用步骤</th><td>① 读任务包契约与 ai-assets 编码规约；② 装载可复用组件，按数据模型实现服务与业务逻辑；③ 约束型提示词 + 代码库上下文注入，保持项目风格一致；④ 随代码写单元测试；⑤ 「读 → 改 → 测」闭环自证，提交 G3 证据。</td></tr>
+        <tr><th>输入规范</th><td>任务包（I/O 契约 + 验收标准）、数据模型、编码规约、接口契约 YAML；凭据一律不进入上下文。</td></tr>
+        <tr><th>产出验收</th><td>编译 / Lint 零违规；单元测试覆盖本任务全部业务分支；接口实现无契约漂移；自证报告（编译 / Lint / 单测）齐备。</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <h4><span class="dot"></span>FrontendAgent · 前端 <span class="tag">SOP-06</span></h4>
+      <table>
+        <tr><th>触发场景</th><td>收到 PMAgent 派发的前端任务包（G2 通过后）。</td></tr>
+        <tr><th>调用步骤</th><td>① 读任务包、UI 原型描述与组件库索引；② 复用组件（登录 / 权限 / 报表等）；③ 按接口契约接入；④ 组件级测试自证；⑤ 提交 G3 证据。</td></tr>
+        <tr><th>输入规范</th><td>任务包、接口定义、UI 原型描述、组件库索引；无契约不接入。</td></tr>
+        <tr><th>产出验收</th><td>界面 / 交互按原型落地；复用组件占比达标；组件测试通过；契约实现一致；自证报告齐备。</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <h4><span class="dot"></span>ApiAgent · 接口 <span class="tag">SOP-07</span></h4>
+      <table>
+        <tr><th>触发场景</th><td>G2 接口契约定稿；或联调发现契约需修订。</td></tr>
+        <tr><th>调用步骤</th><td>① 契约先行：产出 OpenAPI 定义；② 生成 Mock 供前后端并行联调；③ 生成并执行接口测试；④ 自动生成 API 文档；⑤ 联调冲突回写契约并通知相关方。</td></tr>
+        <tr><th>输入规范</th><td>接口契约 YAML、字段 / 错误码 / 权限语义、变更记录；缺语义即退回 ArchitectAgent。</td></tr>
+        <tr><th>产出验收</th><td>OpenAPI 可被前后端直接消费；Mock 就绪；接口测试全绿；API 文档自动生成；契约变更留痕。</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <p style="font-weight:700;color:#16457e;margin:16px 0 6px">品控域 · SOP-08 ~ SOP-10</p>
+  <div class="grid g2">
+    <div class="card">
+      <h4><span class="dot"></span>QAAgent · 质量 Gate <span class="tag">SOP-08</span></h4>
+      <table>
+        <tr><th>触发场景</th><td>任一 Gate 证据包提交；或流水线进入 G4 阶段。</td></tr>
+        <tr><th>调用步骤</th><td>① 读 Gate 规则与证据包；② 运行四层测试（单元 / 集成 / E2E / 性能）；③ 计量业务覆盖率（≥95% 门禁）；④ 有罪推定：证据不足即退回，附缺陷清单；⑤ 记录失败数据回写。</td></tr>
+        <tr><th>输入规范</th><td>Gate 规则、各段证据包、测试规范、覆盖率基线；证据不足即视为有罪、不予放行（有罪推定）。</td></tr>
+        <tr><th>产出验收</th><td>裁决报告含完整证据链；覆盖率 ≥95% 才放行；退回单附缺陷清单与定位；失败数据入库。</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <h4><span class="dot"></span>ReviewAgent · 独立评审 <span class="tag">SOP-09</span></h4>
+      <table>
+        <tr><th>触发场景</th><td>G3 完成后 / G4 前；G6 交付前终审。</td></tr>
+        <tr><th>调用步骤</th><td>① 代码走查（结构 / 安全）；② 需求可追溯性检查（需求 → 用例 → 代码）；③ 安全扫描（OWASP 高风险）；④ 凭据泄露扫描（G-sec）：搜明文账号 / 密码 / API Key / Token / 连接串，命中即拦截放行并告警 FDE；⑤ 出具评审报告；⑥ 不合格退回附证据。</td></tr>
+        <tr><th>输入规范</th><td>代码、PRD、测试用例、安全基线、凭据审计记录；不接受无需求对应的代码。</td></tr>
+        <tr><th>产出验收</th><td>可追溯矩阵 100% 闭环；安全扫描无高风险；凭据泄露扫描零命中（明文凭据 0）；评审报告 / 退回单齐备。</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <h4><span class="dot"></span>DeployAgent · 部署交付 <span class="tag">SOP-10</span></h4>
+      <table>
+        <tr><th>触发场景</th><td>G4 通过，进入部署窗口。</td></tr>
+        <tr><th>调用步骤</th><td>① 环境编排与部署脚本（模板复用）；② 部署 + 冒烟测试 ≤30 分钟；③ 验证回滚预案；④ 生成 API 文档 / 运维手册 / 用户指南（完整性 ≥90%）；⑤ 上线切换与移交单。</td></tr>
+        <tr><th>输入规范</th><td>G4 产物、环境清单、部署模板、客户上线窗口；缺回滚预案不部署。</td></tr>
+        <tr><th>产出验收</th><td>部署 + 冒烟 ≤30 分钟；回滚演练通过；文档三件套完整性 ≥90%；上线移交单签署。</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="note info"><b>SOP 即 Agent 的流程内存：</b>Agent 仅凭 SOP 即可完成产出并通过验收清单——若中途卡住，说明 SOP 的输入规范或步骤还不够「无歧义」，应由 DistillAgent 回写修订（SOP 带版本号，失败点回写为修订项）。</div>
+
+  <h3>协作模式与编排纪律</h3>
+  <div class="grid g3">
+    <div class="card">
+      <h4><span class="dot"></span>流水线接力（主模式）</h4>
+      <p style="font-size:13.5px">需求 → 设计 → 开发 → 测试 → 部署，段间有质量 Gate，Gate 不通过产物退回上游、不流向下游。上一段产出不通过，下一段不启动。</p>
+    </div>
+    <div class="card">
+      <h4><span class="dot"></span>并行编排（提速）</h4>
+      <p style="font-size:13.5px">契约先行解耦后，Backend / Frontend / Api 三席并行开工；任务粒度相当、接口契约明确、由 PMAgent 汇总校验。目标：并行耗时 ≤ 串行 50%。</p>
+    </div>
+    <div class="card">
+      <h4><span class="dot"></span>Swarm 转交（兜底）</h4>
+      <p style="font-size:13.5px">边界不清的任务允许跨域 handoff（如 ApiAgent 发现契约歧义转交 ArchitectAgent），附带完整上下文；设最大转交次数，超限回退 FDE 人工介入。</p>
+    </div>
+  </div>
+  <div class="grid g3">
+    <div class="card">
+      <h4><span class="dot"></span>契约先行</h4>
+      <p style="font-size:13.5px">Agent 间只认接口契约与产物规范，不认人、不读对方内部实现。交接产物固定格式（架构 JSON、接口 YAML、任务包清单）。</p>
+    </div>
+    <div class="card">
+      <h4><span class="dot"></span>硬超时 + 异常降级</h4>
+      <p style="font-size:13.5px">每个 Agent 有硬超时，卡死即标记失败并触发备用路径/告警；单项目 Agent 故障不影响其他项目。失败数据记录并回写，积累为改进输入。</p>
+    </div>
+    <div class="card">
+      <h4><span class="dot"></span>全景看板</h4>
+      <p style="font-size:13.5px">PMAgent 维护统一看板：哪个 Agent 在运行 / 等待 / 报错 / 已完成，Gate 通过率、Token 消耗、覆盖率读数，供 FDE 随时查看。</p>
+    </div>
+  </div>
+
+  <div class="note warn"><b>编排纪律（从 2 个开始、先串后并）：</b>不要一上来就编排十席。先让每个 Agent 在职责范围内独立可靠（单 Agent 质量缺陷会在编排中被放大），再逐步增加并行度；每次并行提速都验证并行度与质量不倒退。</div>
+</section>
+
+<!-- ============ 05 全生命周期流水线 ============ -->
+<section id="s5">
+  <h2 class="sec"><span class="num">05</span>全生命周期流水线与质量 Gate</h2>
+  <p class="secdesc">对应《AI 工程概论》的五阶段模型，映射到三域执行；每段输出进入一道质量 Gate，Gate 不通过，下一段不启动。五阶段：场景挖掘与需求分析 → 产品设计与方案架构 → 单点实现 → 多 Agent 编排与流水线 → 测试部署交付复盘。五阶段由项目管理域按 PDCA 四步循环驱动，每道质量 Gate 即 Check 节点，每步有量化反馈（进度 / Gate 通过率 / Token 消耗 / Bug 数 / 覆盖率）。</p>
+
+  <h3>阶段与域映射</h3>
+  <table>
+    <tr><th style="width:210px">阶段（AI 工程概论）</th><th>执行 Agent</th><th>归属域</th><th>质量 Gate</th></tr>
+    <tr><td>① 场景挖掘与需求分析（发现问题）</td><td>ProductAgent（深访 / MoSCoW / PRD）</td><td>项目管理域</td><td>G1 需求基线</td></tr>
+    <tr><td>② 产品设计与方案架构（定义方案）</td><td>ArchitectAgent（蓝图 / 契约 / 拆包）</td><td>项目管理域</td><td>G2 方案契约</td></tr>
+    <tr><td>③ 提示词工程与单点实现（单 Agent 实现）</td><td>BackendAgent / FrontendAgent / ApiAgent</td><td>Coding 域</td><td>G3 编码合规</td></tr>
+    <tr><td>④ 多 Agent 编排与流水线（系统化交付）</td><td>PMAgent 编排，Coding 域三席并行 / 接力</td><td>项目管理域 + Coding 域</td><td>G4 四层测试</td></tr>
+    <tr><td>⑤ 测试、部署、交付与复盘（闭环）</td><td>QAAgent / ReviewAgent / DeployAgent / DistillAgent</td><td>品控域 + 项目管理域</td><td>G5 部署冒烟 · G6 交付验收</td></tr>
+  </table>
+
+  <h3>流水线全景（G1 → G6）</h3>
+  <div class="flow" style="justify-content:flex-start">
+    <div class="node dom"><b>FDE 立项</b><small>立项单 + 标准 + 验收规则</small></div><span class="arr">→</span>
+    <div class="node"><b>需求分析</b><small>ProductAgent</small></div><span class="arr">→</span>
+    <div class="node gate"><b>G1 需求基线</b></div><span class="arr">→</span>
+    <div class="node"><b>方案架构</b><small>ArchitectAgent</small></div><span class="arr">→</span>
+    <div class="node gate"><b>G2 方案契约</b></div><span class="arr">→</span>
+    <div class="node"><b>编码实现</b><small>Coding 域三席</small></div><span class="arr">→</span>
+    <div class="node gate"><b>G3 编码合规</b></div><span class="arr">→</span>
+    <div class="node gate"><b>G4 四层测试</b></div><span class="arr">→</span>
+    <div class="node"><b>部署交付</b><small>DeployAgent</small></div><span class="arr">→</span>
+    <div class="node gate"><b>G5 部署冒烟</b></div><span class="arr">→</span>
+    <div class="node gate"><b>G6 交付验收</b></div><span class="arr">→</span>
+    <div class="node dom"><b>FDE 终验 / 复盘</b><small>DistillAgent 蒸馏入库</small></div>
+  </div>
+
+  <div class="grid g2">
+    <div class="card">
+      <h4><span class="dot"></span>阶段① · 需求收敛</h4>
+      <p style="font-size:13.5px">ProductAgent 执行需求深访：5Why 追问、行业速览（15 分钟输出行业架构与提效场景）、MoSCoW 输出需求清单并<strong>冻结基线</strong>。PRD 用三段式提示词（背景 + 约束 + 验收标准）生成，每条需求带可度量验收条件，做歧义检测。</p>
+    </div>
+    <div class="card">
+      <h4><span class="dot"></span>阶段② · 方案蓝图</h4>
+      <p style="font-size:13.5px">ArchitectAgent 从 PRD 生成架构图（JSON）、数据模型、接口定义（YAML），做任务拆包：每个任务包 ≤2 人天，含独立输入 / 输出契约与验收标准——这是后续并行编排的前提。</p>
+    </div>
+    <div class="card">
+      <h4><span class="dot"></span>阶段③ · 单点实现</h4>
+      <p style="font-size:13.5px">Coding 域用<strong>约束型提示词</strong>（角色 / 格式 / 边界 / 示例 / 反例 / 验收六类约束）+ 代码库上下文注入驱动；遇 Bug 执行「读 → 改 → 测」闭环，3 轮内归零。</p>
+    </div>
+    <div class="card">
+      <h4><span class="dot"></span>阶段④ · 编排流水线</h4>
+      <p style="font-size:13.5px">PMAgent 按契约并行编排 Backend / Frontend / Api 三席（并行耗时 ≤ 串行 50%）；联调后整体进入品控域。多项目并行时叠加资源调度、冲突避让、异常降级。</p>
+    </div>
+    <div class="card">
+      <h4><span class="dot"></span>阶段⑤ · 交付复盘</h4>
+      <p style="font-size:13.5px">QAAgent 执行四层测试与覆盖率计量 → ReviewAgent 独立评审 → DeployAgent 部署交付与文档生成 → DistillAgent 四维复盘并蒸馏 Skill / 模板入库，为下一个项目提速。</p>
+    </div>
+    <div class="card">
+      <h4><span class="dot"></span>有罪推定（贯穿全程）</h4>
+      <p style="font-size:13.5px"><strong>所有产出物——PRD、架构、代码、测试、文档——在下游 Agent 眼里默认不合格（有罪），拿出证据自证清白（合格）才放行。</strong>证据 = 测试报告 / 覆盖率报告 / 扫描结果 / 评审记录 / 冒烟结果 / 文档完整性核验。质量 Gate 采用有罪推定：证据不足即退回，而不是证据不足即放行。</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 06 质量 Gate ============ -->
+<section id="s6">
+  <h2 class="sec"><span class="num">06</span>质量 Gate 细则</h2>
+  <p class="secdesc">六道 Gate 是流水线的「硬闸门」，由 QAAgent 执行、ReviewAgent 复核、PMAgent 裁决、FDE 终审。<b>Gate 采用有罪推定</b>：所有产出物默认不合格，证据不足即退回——不是证据不足即放行。通过率目标 &gt;90%；未过 Gate 的产物一律退回，不得携带进入下一段。</p>
+
+  <div class="note danger"><b>有罪推定原则：</b>下游 Agent 对上游交付的每一份产出物持悲观态度——PRD、架构、代码、测试、文档无一豁免，默认都是不合格的。放行的唯一条件是证据自证清白；证据不足、存疑、缺环，一律退回上游并附缺陷清单，由产出方补齐证据后重跑 Gate。</div>
+
+  <table>
+    <tr><th style="width:120px">产出物</th><th>默认状态（有罪推定）</th><th>自证清白的证据</th><th style="width:90px">清白标准</th></tr>
+    <tr><td>PRD</td><td>默认不合格</td><td>歧义检测报告、MoSCoW 清单、可度量验收条件核验</td><td>G1 通过</td></tr>
+    <tr><td>架构 / 契约</td><td>默认不合格</td><td>架构一致性检查、接口契约完整性核验、任务包契约核验</td><td>G2 通过</td></tr>
+    <tr><td>代码</td><td>默认不合格</td><td>编译 / Lint / 单测自证报告、契约无漂移比对</td><td>G3 通过</td></tr>
+    <tr><td>测试</td><td>默认不合格</td><td>四层测试结果、覆盖率 ≥95% 计量、可追溯矩阵</td><td>G4 通过</td></tr>
+    <tr><td>文档</td><td>默认不合格</td><td>完整性 ≥90% 核验、与产物一致性比对、评审记录</td><td>G6 通过</td></tr>
+  </table>
+
+  <div class="gate" style="border-left-color:var(--red)">
+    <h4 style="color:var(--red)">G-sec · 凭据泄露扫描 Gate（跨阶段安全闸 · ReviewAgent 执行）</h4>
+    <ul>
+      <li>对每个阶段全部产物（PRD / 架构 / 代码 / 测试 / 文档 / 复盘记录 / 日志）执行凭据泄露扫描：明文账号、密码、API Key、Token、连接串等，命中一律拦截</li>
+      <li>发现明文凭据 → 立即拦截放行并告警 FDE，退回产出方移除凭据、修复泄露点后重跑本 Gate</li>
+      <li>凭据「用而不见」核查：Agent 的 prompt / 上下文 / 日志 / 复盘记录中不得出现任何凭据明文或部分明文</li>
+      <li>扫描规则随 ai-assets 安全基线维护；命中记录计入失败数据，供 DistillAgent 复盘</li>
+    </ul>
+  </div>
+
+  <div class="gate">
+    <h4>G1 · 需求基线 Gate（入口闸）</h4>
+    <ul>
+      <li>MoSCoW 需求清单齐全，Must 类需求全部有可度量验收条件（数字 / 阈值 / 场景可判定）</li>
+      <li>歧义检测通过：「危化品告警」类口语已挖至底层真实诉求（如分区联动应急处置），无未澄清术语</li>
+      <li>需求基线冻结单签署，变更走显式变更流程（变更 → 重跑 G1）</li>
+    </ul>
+  </div>
+
+  <div class="gate">
+    <h4>G2 · 方案契约 Gate</h4>
+    <ul>
+      <li>架构一致性检查通过：数据模型 / 接口契约 / 模块划分与 PRD 逐条可追溯</li>
+      <li>接口定义（YAML）完整：字段、错误码、权限、幂等、并发语义齐全</li>
+      <li>任务包全部 ≤2 人天，每个任务包含独立输入 / 输出契约与验收标准</li>
+      <li>可复用资产检索完成：已有登录 / 权限 / 报表组件优先装载，而非重写</li>
+    </ul>
+  </div>
+
+  <div class="gate">
+    <h4>G3 · 编码合规 Gate</h4>
+    <ul>
+      <li>编译通过、Lint 零违规、编码规约一致（代码库上下文注入校验）</li>
+      <li>单元测试随代码同行（Backend / Frontend / Api 各自自证报告）</li>
+      <li>凭据零穿透核查：无密钥进入代码 / 日志 / 上下文；敏感配置仅本地；G-sec 凭据泄露扫描零命中</li>
+      <li>契约实现一致性：接口与 G2 契约无漂移</li>
+    </ul>
+  </div>
+
+  <div class="gate">
+    <h4>G4 · 四层测试 Gate（品控核心闸）</h4>
+    <ul>
+      <li>单元 + 集成 + E2E + 性能四层测试全部运行</li>
+      <li>测试代码业务覆盖率 ≥95%（需求 → 用例 → 代码 逐条映射）</li>
+      <li>E2E 覆盖核心业务路径；性能测试满足 SLA（并发 / 响应时间）</li>
+      <li>ReviewAgent 独立评审通过：代码走查、可追溯矩阵、安全扫描无高风险</li>
+    </ul>
+  </div>
+
+  <div class="gate pass">
+    <h4>G5 · 部署冒烟 Gate</h4>
+    <ul>
+      <li>新环境部署 + 冒烟测试 ≤30 分钟（环境编排脚本化）</li>
+      <li>冒烟用例覆盖关键链路：登录、核心业务流、健康检查端点</li>
+      <li>回滚预案就绪（上一版本可恢复），上线窗口与客户确认</li>
+    </ul>
+  </div>
+
+  <div class="gate pass">
+    <h4>G6 · 交付验收 Gate（出口闸）</h4>
+    <ul>
+      <li>API 文档 / 运维手册 / 用户指南齐全，完整性 ≥90%（DeployAgent 产出）</li>
+      <li>客户验收标准逐项核验（G1 的验收条件回环验证）</li>
+      <li>DistillAgent 四维复盘完成，≥3 条经验蒸馏入库；资产库提交已合并</li>
+      <li>FDE 终验通过 → 签发上线移交单</li>
+    </ul>
+  </div>
+
+  <h3>评估闭环：让流水线自我纠错</h3>
+  <div class="grid g2">
+    <div class="card">
+      <h4><span class="dot"></span>发现 → 修复 → 验证循环</h4>
+      <p style="font-size:13.5px">Gate 拦截不合格产出后，不「报警等人来修」，而是自动触发对应修复 Agent（编码问题 → Coding 域；契约问题 → ArchitectAgent），修复后重跑 Gate，循环直到通过或达到最大重试次数；超限自动升级 FDE。</p>
+    </div>
+    <div class="card">
+      <h4><span class="dot"></span>失败数据积累</h4>
+      <p style="font-size:13.5px">每次问题的类型、位置、修复方式被记录。积累到阈值后自动分析：系统最常出哪类问题、哪个 Agent 需要加强——形成持续改进正循环，并为 DistillAgent 提供复盘输入。</p>
+    </div>
+    <div class="card">
+      <h4><span class="dot"></span>回溯机制</h4>
+      <p style="font-size:13.5px">下游发现问题可沿 Gate 追溯上游：接口契约漂移 → 查 G2；覆盖率缺口 → 查任务包验收标准。避免「最后测试没过，不知道是谁的锅」。</p>
+    </div>
+    <div class="card">
+      <h4><span class="dot"></span>安全合规内建</h4>
+      <p style="font-size:13.5px">凭据只在本地配置和使用，零穿透大模型服务，不进入任何 Agent 可见上下文；G3 与 G6 两次安全核查；Token 消耗按项目 / Agent 分组核算，成本透明。</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 07 实施路线图 ============ -->
+<section id="s7">
+  <h2 class="sec"><span class="num">07</span>实施路线图</h2>
+  <p class="secdesc">严格遵循「先立后破、先串后并」：先建资产与流程（立），再上红线与并行（破）；首期用一个需求稳定、ROI 最高的项目串行走通五阶段，再并行提速、规模复制，最后完成能力转移。</p>
+
+  <div class="tl">
+    <div class="step">
+      <div class="ph">阶段 0 · 第 1–2 周</div>
+      <h4>基建先行（先立）：资产库 + SOP 2.0 + Token 治理 + FDE 认证</h4>
+      <div class="card" style="margin:10px 0 0">
+        <ul style="padding-left:20px;font-size:13.5px">
+          <li><b>代码库 + Agent 库：</b>建立目录结构（规约 / 模板 / 案例 / 组件库）、README 索引、Git + PR 管理；首批上架可复用 Agent（登录 / 权限 / 推送 / 报表导出）。</li>
+          <li><b>SOP 2.0：</b>按四要素撰写首批面向 Agent 的 SOP——立项、需求深访、PRD 生成、任务拆包、编码规约、Gate 检查、部署。</li>
+          <li><b>目录规范落地：</b>建立 ai-assets 与首个项目仓库（双仓物理分离、各自独立 Git）；编写两仓根目录 OPCTEAM.md 与每层 README 索引；锁定「目录名即语义」命名规范与 .env.local 凭据红线。</li>
+          <li><b>Token 治理：</b>按项目 / Agent 分组、额度管控、用量核算、计量看板上线。</li>
+          <li><b>FDE 培养：</b>第一批 FDE 培训认证——问题拆解、Agent 指挥、结果验证、流程沉淀、持续迭代五项能力，实操考核过关持证。</li>
+          <li><b>效果验收：</b>随机抽人驱动同一 Agent 产出一致性达标，证明「不因人而异」成立。</li>
+        </ul>
+      </div>
+    </div>
+    <div class="step">
+      <div class="ph">阶段 1 · 第 3–6 周</div>
+      <h4>串行试点：首个高 ROI 项目走通五阶段流水线</h4>
+      <div class="card" style="margin:10px 0 0">
+        <ul style="padding-left:20px;font-size:13.5px">
+          <li>选一个需求稳定、ROI 最高的新立项项目（如物流 EHS 平台二期模块）。</li>
+          <li>ProductAgent 深访 + MoSCoW 冻结基线 → G1；全程<strong>串行</strong>，十席逐个验证，不并行；每个阶段按 PDCA 四步走完（Plan 定目标 → Do → Check → Act），不得跳步、不得带病交付。</li>
+          <li>跑通 G1 → G6 全链路，建立数据基线：AI 覆盖率、Gate 通过率、四层覆盖率、部署耗时、人均项目数。</li>
+          <li><b>阶段门禁：</b>Gate 通过率 &gt;90%、覆盖率 ≥95%、部署 + 冒烟 ≤30 分钟——全部达标才进入下一阶段。</li>
+        </ul>
+      </div>
+    </div>
+    <div class="step">
+      <div class="ph">阶段 2 · 第 7–10 周</div>
+      <h4>并行提速：Coding 域三席并行 + 多项目起步</h4>
+      <div class="card" style="margin:10px 0 0">
+        <ul style="padding-left:20px;font-size:13.5px">
+          <li>从 2 席并行开始（如 Backend + Frontend，契约先行），验证并行度与质量后再加 Api 席。</li>
+          <li>目标：并行编排耗时 ≤ 串行 50%。</li>
+          <li>启动第 2 个项目串行 + 第 1 个项目迭代并行，练习资源调度、冲突避让、异常降级、全景看板。</li>
+          <li>每轮并行提速都用「随机抽人驱动 Agent 产出一致性」复查质量不倒退。</li>
+        </ul>
+      </div>
+    </div>
+    <div class="step">
+      <div class="ph">阶段 3 · 第 11 周起（持续）</div>
+      <h4>规模复制与能力转移：1人/3项目+，组织自身具备工程化能力</h4>
+      <div class="card" style="margin:10px 0 0">
+        <ul style="padding-left:20px;font-size:13.5px">
+          <li>标杆资产包复制：把已验证项目的代码库结构、Agent 清单、SOP 模板打包，所有新立项项目装载资产包启动。</li>
+          <li>AI 覆盖率 70% → 90%+；人均项目数 1人/1项目 → 1人/3项目+。</li>
+          <li>新人两周达到老人 80% 产出效率（依赖资产库 + SOP + Agent 库）。</li>
+          <li><b>终局转移：</b>FDE 工作方法与资产库运营能力转移给公司自有团队——公司自行具备工程化交付能力，不依赖外部 FDE。</li>
+          <li>组织版本化 + 季度迭代：每季度复测 AI 原生度五维，版本号前进一个小版本，经验回写资产库。</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="note warn"><b>反工程化风险提示：</b>推行期可能出现两类阻力——「拒绝标准化」（业务特殊论、永远在试点）与「以招人堆产能」（流程缺口先增编）。应对机制：新增人力一律过「工程化前置评审」五问；计量看板只晾晒不评比；效果验收替代文件验收；治理靠数据不靠运动。</div>
+</section>
+
+<!-- ============ 08 验收对照 ============ -->
+<section id="s8">
+  <h2 class="sec"><span class="num">08</span>验收对照</h2>
+  <p class="secdesc">对照《星澜科技需求》的验收条款，逐条给出衡量方式与达成阶段。终验方式：选一个真实新立项项目完整走一遍五阶段流水线，以下各条逐项核验。</p>
+  <table>
+    <tr><th>需求验收项</th><th>本方案承诺</th><th>衡量方式</th><th>达成阶段</th></tr>
+    <tr><td>有罪推定：所有产出（PRD/架构/代码/测试/文档）默认不合格，证据不足即退回（非证据不足即放行）；各段质量 Gate 通过率 &gt;90%</td><td>六道 Gate + 证据包机制；通过率目标 &gt;90%</td><td>计量看板 Gate 通过率读数</td><td>阶段 1 起持续</td></tr>
+    <tr><td>测试代码业务覆盖率 ≥95%（单元 / 集成 / E2E / 性能四层）</td><td>G4 门禁：四层测试 + 覆盖率 ≥95%</td><td>覆盖率报告 + 可追溯矩阵</td><td>阶段 1 起持续</td></tr>
+    <tr><td>新环境部署加冒烟测试 ≤30 分钟</td><td>G5 门禁：脚本化部署 + 冒烟 ≤30 分钟</td><td>部署计时记录</td><td>阶段 1 起持续</td></tr>
+    <tr><td>并行编排耗时 ≤ 串行耗时的 50%</td><td>阶段 2 目标：契约先行三席并行</td><td>PMAgent 耗时对比记录</td><td>阶段 2</td></tr>
+    <tr><td>AI 覆盖率 20% → 70% → 90%+</td><td>编码交付环节全覆盖 → 90%+</td><td>计量看板 AI 覆盖率</td><td>阶段 1 / 2 / 3</td></tr>
+    <tr><td>人均项目数 N人/1项目 → 1人/1项目 → 1人/3项目+</td><td>FDE + SubAgents 每项目组</td><td>项目数 ÷ 参与 FDE 数</td><td>阶段 1 / 2 / 3</td></tr>
+    <tr><td>不因人而异：换 FDE 驱动同一资产库与流程结果一致</td><td>效果验收机制</td><td>随机抽人驱动 Agent 产出一致性比对</td><td>阶段 0 起常态</td></tr>
+    <tr><td>新人两周达到老人 80% 的产出效率</td><td>资产库 + SOP + Agent 库自助上手</td><td>新人产出效率对比</td><td>阶段 3</td></tr>
+    <tr><td>凭据零穿透安全铁律</td><td>凭据仅本地、零穿透大模型服务；Agent 用而不见（不入 prompt/上下文/日志/复盘记录）</td><td>G-sec 凭据泄露扫描零命中 + 审计留痕</td><td>全程</td></tr>
+    <tr><td>终局：FDE 方法与资产库运营转移给公司自有团队</td><td>阶段 3 能力转移</td><td>自有团队独立运营资产库与流水线</td><td>阶段 3</td></tr>
+  </table>
+</section>
+
+<!-- ============ 附录 ============ -->
+<section id="s9">
+  <h2 class="sec"><span class="num">附</span>SOP 2.0 模板与术语表</h2>
+
+  <h3>SOP 2.0 四要素模板（面向 Agent，不面向人）</h3>
+  <div class="card">
+    <p style="font-size:13.5px">每份可复制的 SOP 必须含四要素；Agent 仅凭 SOP 即可完成产出并通过验收清单——若卡住，说明 SOP 还不够「无歧义」。</p>
+    <table>
+      <tr><th style="width:120px">要素</th><th>要求</th><th>示例</th></tr>
+      <tr><td><b>① 触发场景</b></td><td>条件无歧义，Agent 可自动判断是否执行</td><td>「当 G2 方案契约通过后」而非「在合适的时候」</td></tr>
+      <tr><td><b>② 调用步骤</b></td><td>先做什么、再做什么；每步输入 / 输出；可并行与分支</td><td>「先读契约 YAML → 生成 Mock → 再联调」</td></tr>
+      <tr><td><b>③ 输入规范</b></td><td>输入格式、来源、校验规则明确</td><td>「输入：任务包清单 JSON，缺字段即拒绝」</td></tr>
+      <tr><td><b>④ 产出验收</b></td><td>「做完了 / 做好了」的标准、格式、质量要求、验收清单</td><td>「产出：自证报告，编译 / Lint / 单测全绿」</td></tr>
+    </table>
+  </div>
+
+  <h3>约束型提示词六类约束</h3>
+  <div class="card">
+    <table>
+      <tr><th style="width:80px">约束</th><th>含义</th></tr>
+      <tr><td>角色</td><td>谁在干活（如「你是 BackendAgent」）</td></tr>
+      <tr><td>格式</td><td>输出什么结构（如「JSON / YAML / 代码文件」）</td></tr>
+      <tr><td>边界</td><td>不能做什么（如「不得修改接口契约」）</td></tr>
+      <tr><td>示例</td><td>好的产出长什么样（附样例）</td></tr>
+      <tr><td>反例</td><td>坏的长什么样（附反例，防止走偏）</td></tr>
+      <tr><td>验收</td><td>怎么判断做完了（可自动检查的标准）</td></tr>
+    </table>
+  </div>
+
+  <h3>术语表</h3>
+  <table>
+    <tr><th style="width:170px">术语</th><th>释义</th></tr>
+    <tr><td>FDE（融合交付工程师）</td><td>行业经验 × Agent 编排 × 工程化交付；不写代码，在流程两端做校准与验收。</td></tr>
+    <tr><td>SubAgents 团队</td><td>由一名 FDE 指挥的多 Agent 团队，按三域十席组织，执行交付流水线。</td></tr>
+    <tr><td>质量 Gate</td><td>流水线段间的硬闸门，采用有罪推定：产出默认不合格，证据不足即退回；不通过不流入下一段。</td></tr>
+    <tr><td>SOP 2.0</td><td>面向 Agent 的标准作业程序，四要素：触发场景 / 调用步骤 / 输入规范 / 产出验收。</td></tr>
+    <tr><td>契约先行</td><td>接口与任务包先定契约（YAML / 输入输出规范），Agent 间只认契约不认人。</td></tr>
+    <tr><td>MoSCoW</td><td>需求优先级分类：Must / Should / Could / Won't；冻结基线保证需求稳定。</td></tr>
+    <tr><td>效果验收</td><td>随机抽人驱动同一 Agent 比产出，验证「不因人而异」；替代文件验收。</td></tr>
+    <tr><td>蒸馏（Distill）</td><td>任务完成后自动把可复用经验沉淀为 Skill / 模板，进入资产库。</td></tr>
+    <tr><td>Token 计量总线</td><td>按项目 / Agent 分组计量 Token 消耗与产出比，像管电一样管 AI 投入。</td></tr>
+    <tr><td>四维复盘</td><td>提效 / 质量 / 成本 / 经验四个维度复盘，产出 ≥3 条可复用经验。</td></tr>
+    <tr><td>PDCA 四步循环</td><td>Plan 定目标 → Do 按 SOP 执行 → Check 用 Gate 与五指标核验 → Act 达标放行并复盘；管理域不得跳步、不得带病交付，每步有量化反馈（进度 / Gate 通过率 / Token 消耗 / Bug 数 / 覆盖率）。</td></tr>
+    <tr><td>先立后破 / 先串后并</td><td>先建资产与流程再上红线与并行；先用串行走通再用并行提速。</td></tr>
+    <tr><td>双仓架构</td><td>组织级资产库 ai-assets 与项目级工作区 &lt;project&gt; 物理分离、各自独立 Git 仓库。</td></tr>
+    <tr><td>目录名即语义</td><td>目录 / 文件名即契约：产物按阶段与职责归位，禁 misc / tmp 等无语义目录。</td></tr>
+    <tr><td>OPCTEAM.md 锚点</td><td>仓库根目录的上下文锚点，Agent 进入即读：身份、边界、目录地图、SOP 指针、安全红线。</td></tr>
+    <tr><td>凭据用而不见</td><td>凭据仅本地配置使用、零穿透大模型服务；Agent 可「使用」凭据但从不「看见」——凭据不入 prompt / 上下文 / 日志 / 复盘记录。</td></tr>
+    <tr><td>凭据泄露扫描 Gate</td><td>G-sec：ReviewAgent 对每阶段产物执行扫描，发现明文账号/密码/API Key/Token 即拦截放行并告警 FDE。</td></tr>
+  </table>
+</section>
+
+<footer>
+  <p>本方案依据《星澜科技需求》《AI 工程概论》及《企业 AI Native 组织的工程化》编制 · 星澜智能科技 · 2026</p>
+  <p>有罪推定：所有产出默认不合格，证据不足即退回——不是证据不足即放行。</p>
+</footer>
+
+</div>
+</main>
+<script>
+(function(){
+  var links=document.querySelectorAll('.sidebar nav a');
+  var map={};links.forEach(function(a){map[a.getAttribute('href').slice(1)]=a});
+  function on(){
+    var y=window.scrollY+120,cur='s0';
+    document.querySelectorAll('main section[id]').forEach(function(s){
+      if(s.offsetTop<=y)cur=s.id;
+    });
+    links.forEach(function(a){a.classList.toggle('on',a.getAttribute('href')==='#'+cur)});
+  }
+  window.addEventListener('scroll',on,{passive:true});on();
+})();
+</script>
+</body>
+</html>

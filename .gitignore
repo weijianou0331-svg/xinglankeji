@@ -1,0 +1,10 @@
+# opcteam harness internals — never commit
+.opcteam/
+
+# macOS
+.DS_Store
+
+# local secrets — never commit
+.env
+.env.local
+*.local
